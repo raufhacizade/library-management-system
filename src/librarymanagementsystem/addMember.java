@@ -57,12 +57,12 @@ public class addMember extends javax.swing.JInternalFrame {
     private void autoId() {
         try {
             
-            String sql = "SELECT `mid` FROM `addmember`  ORDER BY mid DESC LIMIT 1";
+            String sql = "SELECT `member_id` FROM `members`  ORDER BY member_id DESC LIMIT 1";
 
             pst = (PreparedStatement) conn.prepareStatement(sql);
             rs = pst.executeQuery();
             if (rs.next()) {
-                String rnno = rs.getString("mid");
+                String rnno = rs.getString("member_id");
                 int co = rnno.length();
                 String txt = rnno.substring(0, 2);
                 String num = rnno.substring(2, co);
@@ -81,7 +81,7 @@ public class addMember extends javax.swing.JInternalFrame {
 
     private void tablelord() {
         try {
-            String sql = "SELECT `mid`, "
+            String sql = "SELECT `member_id`, "
                     + "`name`, "
                     + "`surname`, "
                     + "`birthday`, "
@@ -90,7 +90,7 @@ public class addMember extends javax.swing.JInternalFrame {
                     + "`email`, "
                     + "`contac`, "
                     + "`type` "
-                    + "FROM `addmember`";
+                    + "FROM `members`";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             membersTable.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));
@@ -355,8 +355,8 @@ public class addMember extends javax.swing.JInternalFrame {
     private void btnaddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnaddActionPerformed
 
         try {
-            String sql = "INSERT INTO `addmember`"
-                    + "(`mid`, `name`, `surname`, `birthday`, `gender`, `address`, `email`, `contac`, `type`)"
+            String sql = "INSERT INTO `members`"
+                    + "(`member_id`, `name`, `surname`, `birthday`, `gender`, `address`, `email`, `contac`, `type`)"
                     + " VALUES ('" + memberID.getText()
                            + "','" + name.getText() 
                            + "','" + surName.getText() 
@@ -404,7 +404,7 @@ public class addMember extends javax.swing.JInternalFrame {
     private void btnupdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnupdateActionPerformed
 
         try {
-            String sql = "UPDATE `addmember` SET "
+            String sql = "UPDATE `members` SET "
                     + "`name`='" + name.getText()
                     + "',`surname`='" + surName.getText()
                     + "',`birthday`='" + date()
@@ -413,7 +413,7 @@ public class addMember extends javax.swing.JInternalFrame {
                     + "',`email`='" + email.getText()
                     + "',`contac`='" + contacNo.getText()
                     + "',`type`='" + memberType()
-                    + "' WHERE `mid`='" + memberID.getText() + "'";
+                    + "' WHERE `member_id`='" + memberID.getText() + "'";
             pst = conn.prepareStatement(sql);
             if(controlEmail()){
             pst.execute();
@@ -436,7 +436,7 @@ public class addMember extends javax.swing.JInternalFrame {
 
         try {
 
-            String sql = "DELETE FROM `addmember` WHERE mid='" + memberID.getText() + "'";
+            String sql = "DELETE FROM `members` WHERE member_id='" + memberID.getText() + "'";
 
             pst = conn.prepareStatement(sql);
             pst.execute();

@@ -159,8 +159,40 @@ public class Login extends javax.swing.JFrame {
 
     private void txtpwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpwordActionPerformed
     }//GEN-LAST:event_txtpwordActionPerformed
+    
+    class Point{
+        String name;
+        int x;
+        int y;
 
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public void setY(int y) {
+            this.y = y;
+        }
+        
+    }
     public static void main(String args[]) {
+        
+      
        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

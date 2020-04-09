@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import javax.swing.JOptionPane;
 
 public class BookLend extends javax.swing.JInternalFrame {
@@ -39,12 +40,12 @@ public class BookLend extends javax.swing.JInternalFrame {
 
     private void autoId() {
         try {
-            String sql = "SELECT `recordNo` FROM `bookLend`  ORDER BY recordNo DESC LIMIT 1";
+            String sql = "SELECT `record_id` FROM `bookLend`  ORDER BY record_id DESC LIMIT 1";
 
             pst = (PreparedStatement) conn.prepareStatement(sql);
             rs = pst.executeQuery();
             if (rs.next()) {
-                String rnno = rs.getString("recordNo");
+                String rnno = rs.getString("record_id");
                 int co = rnno.length();
                 String txt = rnno.substring(0, 2);
                 String num = rnno.substring(2, co);
@@ -63,7 +64,11 @@ public class BookLend extends javax.swing.JInternalFrame {
 
     private void tablelord() {
         try {
-            String sql = "SELECT `recordNo`, `mid`, `bid`, `lDate`, `rDate` FROM `booklend`";
+            String sql = "SELECT bl.record_id as 'Record Id', bl.member_id as 'Member Id',concat(m.name,'  ',m.surname) as 'Member name', \n" +
+                         "bl.book_id as 'Book ID',b.name as 'Book Name', bl.lend_date as 'Lend Date', bl.return_date as 'Return Date'\n" +
+                         "FROM booklend as bl \n" +
+                         "INNER JOIN members as m ON bl.member_id=m.member_id\n" +
+                         "INNER JOIN books as b ON bl.book_id=b.book_id";
             pst = (PreparedStatement) conn.prepareStatement(sql);
             rs = (ResultSet) pst.executeQuery();
 
@@ -75,13 +80,13 @@ public class BookLend extends javax.swing.JInternalFrame {
 
     private void update() {
         try {
-            String sql = "UPDATE `addbook` SET `mark`='1' WHERE bid='" + bookId.getText() + "'";
+            String sql = "UPDATE `books` SET `count`=`count`-1 WHERE book_id='" + bookId.getText() + "'";
             pst = conn.prepareStatement(sql);
             pst.execute();
-            JOptionPane.showMessageDialog(rootPane, "Mark update success");
+            //JOptionPane.showMessageDialog(rootPane, "count update success");
             tablelord();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(rootPane, "Mark update unsuccess\n\n" + e);
+            JOptionPane.showMessageDialog(rootPane, "count update unsuccess\n\n" + e);
         }
     }
 
@@ -282,17 +287,26 @@ public class BookLend extends javax.swing.JInternalFrame {
 
     private void bookIdKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_bookIdKeyReleased
         try {
-            String sql = "SELECT `name`, `book_type` FROM `addbook` WHERE bid='" + bookId.getText() + "'";
+            String sql = "SELECT `name`, `book_type`, `count` FROM `books` WHERE book_id='" + bookId.getText() + "' and count > 0";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
 
-            if (rs.next()) {
-                bookName.setText(rs.getString("name"));
-                bookType.setText(rs.getString("book_type"));
-            } else {
-                bookName.setText("");
-                bookType.setText("");
-            }
+  
+                if (rs.next()) {
+                    if(rs.getInt("count")>0){
+                    bookName.setText(rs.getString("name"));
+                    bookType.setText(rs.getString("book_type"));
+                    } else {
+                        bookId.setText("");
+                        JOptionPane.showMessageDialog(rootPane, "Book Name : "+rs.getString("name")
+                                +"\nAll copies of this book has been lended.");
+                        
+                    }
+                } else {
+                    bookName.setText("");
+                    bookType.setText("");
+                }
+            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(rootPane, e);
         }
@@ -300,12 +314,12 @@ public class BookLend extends javax.swing.JInternalFrame {
 
     private void memberIdKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_memberIdKeyReleased
         try {
-            String sql = "SELECT `name`, `type` FROM `addmember` WHERE mid='" + memberId.getText() + "'";
+            String sql = "SELECT concat(name,'  ',surname) as 'fullname',`type` FROM `members` WHERE member_id='" + memberId.getText() + "'";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
 
             if (rs.next()) {
-                memberName.setText(rs.getString("name"));
+                memberName.setText(rs.getString("fullname"));
                 memberType.setText(rs.getString("type"));
             } else {
                 memberName.setText("");
@@ -324,13 +338,13 @@ public class BookLend extends javax.swing.JInternalFrame {
 
         try {
             String sql = "INSERT INTO `booklend`"
-                    + "(`recordNo`, `mid`, `bid`, `lDate`, `rDate`,`mark`)"
+                    + "(`record_id`, `member_id`, `book_id`, `lend_date`, `return_date`)"
                     + " VALUES ('" + recordNo.getText()
                     + "','" + memberId.getText()
                     + "','" + bookId.getText()
                     + "','" + lendDate.getText()
                     + "','" + returnDate.getText()
-                    + "','0')";
+                    + "')";
             PreparedStatement pst = (PreparedStatement) conn.prepareStatement(sql);
             pst.execute();
 
@@ -338,7 +352,7 @@ public class BookLend extends javax.swing.JInternalFrame {
             update();
             tablelord();
             clear();
-            
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(rootPane, "Unsuccessfully Insert\n\n" + e);
         }

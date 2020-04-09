@@ -23,7 +23,7 @@ public class Allmember extends javax.swing.JInternalFrame {
    private void tablelord() {
         try {
             String sql = "SELECT "
-                    + "`mid`, "
+                    + "`member_id` as 'member ID', "
                     + "`name`, "
                     + "`surname`, "
                     + "`birthday`, "
@@ -32,7 +32,7 @@ public class Allmember extends javax.swing.JInternalFrame {
                     + "`email`, "
                     + "`contac`, "
                     + "`type` "
-                    + "FROM `addmember`";
+                    + "FROM `members`";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             allMembersTable.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));
@@ -171,7 +171,7 @@ public class Allmember extends javax.swing.JInternalFrame {
     private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyReleased
         try {
             String sql = "SELECT "
-                    + "`mid`, "
+                    + "`member_id`, "
                     + "`name`, "
                     + "`surname`, "
                     + "`birthday`, "
@@ -180,7 +180,7 @@ public class Allmember extends javax.swing.JInternalFrame {
                     + "`email`, "
                     + "`contac`, "
                     + "`type` "
-                    + "FROM `addmember` WHERE name LIKE '%"+search.getText()+"%'";
+                    + "FROM `members` WHERE name LIKE '%"+search.getText()+"%'";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             allMembersTable.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));

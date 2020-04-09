@@ -22,15 +22,16 @@ public class Allbooks extends javax.swing.JInternalFrame {
      private void tablelord() {
         try {
             String sql = "SELECT "
-                    + "`bid`, "
+                    + "`book_id`, "
                     + "`name`, "
-                    + "`b_code`, "
+                    + "`book_code`, "
                     + "`date`, "
                     + "`category`, "
                     + "`book_type`, "
                     + "`publisher`, "
-                    + "`price`"
-                    + " FROM `addbook`";
+                    + "`price`,"
+                    + "`number`"
+                    + " FROM `books`";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             allBooksTable.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));
@@ -172,15 +173,16 @@ public class Allbooks extends javax.swing.JInternalFrame {
     private void searchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchKeyReleased
         try {
             String sql = "SELECT "
-                    + "`bid`, "
+                    + "`book_id`, "
                     + "`name`, "
-                    + "`b_code`, "
+                    + "`book_code`, "
                     + "`date`, "
                     + "`category`, "
                     + "`book_type`, "
                     + "`publisher`, "
-                    + "`price`"
-                    + " FROM `addbook` where name LIKE '%"+search.getText()+"%'";
+                    + "`price`,"
+                    + "`number`"
+                    + " FROM `books` where name LIKE '%"+search.getText()+"%'";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             allBooksTable.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));

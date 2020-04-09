@@ -11,8 +11,8 @@ public class DBConnect {
         try{
             
             Class.forName("com.mysql.jdbc.Driver");
-            con=(Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/library?","root","");
-            JOptionPane.showMessageDialog(null, "Connection Success");
+            con=(Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/library_management?","root","");
+            //JOptionPane.showMessageDialog(null, "Connection Success");
             
         }catch (Exception e){
             JOptionPane.showMessageDialog(null, "Connection Unsuccess\n\n"+e);

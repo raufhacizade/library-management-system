@@ -20,37 +20,58 @@ public class Return extends javax.swing.JInternalFrame {
         initComponents();
         conn = DBConnect.connect();
     }
-    
-    private void update(){
-        try{
-            String sql="UPDATE `addbook` SET `mark`='0' WHERE bid='"+bookId.getText()+"'";
-            pst=conn.prepareStatement(sql);
+
+    private void update() {
+        try {
+            String sql = "UPDATE `books` SET count=count+1 WHERE book_id='" + bookId.getText() + "' WHERE count < number";
+            pst = conn.prepareStatement(sql);
             pst.execute();
-            JOptionPane.showMessageDialog(rootPane, "Mark update success");
+            JOptionPane.showMessageDialog(rootPane, "Number update success");
+
             //tablelord();
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(rootPane, "Mark update unsuccess\n\n"+e);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(rootPane, "Number update unsuccess\n\n" + e);
         }
     }
-    
-     private void returnMark(){
-        try{
-            String sql="UPDATE `booklend` SET `mark`='1' WHERE bid='"+bookId.getText()+"'";
-            pst=conn.prepareStatement(sql);
-            pst.execute();
-            JOptionPane.showMessageDialog(rootPane, "Mark update success");
-            //tablelord();
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(rootPane, "Mark update unsuccess\n\n"+e);
-        }
+
+//     private void returnMark(){
+//        try{
+//            String sql="UPDATE `booklend` SET `mark`='1' WHERE book_id='"+bookId.getText()+"'";
+//            pst=conn.prepareStatement(sql);
+//            pst.execute();
+//            JOptionPane.showMessageDialog(rootPane, "Mark update success");
+//            //tablelord();
+//        }catch(Exception e){
+//            JOptionPane.showMessageDialog(rootPane, "Mark update unsuccess\n\n"+e);
+//        }
+//    }
+    private void bill() {
+        bill.setText("================================\n"
+                + "World Library \n"
+                + "Record ID : \t\t" + recordID.getText() + " \n"
+                + "NO of Late Date :\t" + lateDate.getText() + "\n"
+                + "Amount of Fine :\t" + fine.getText() + "\n"
+                + "================================");
     }
-    
-    private void bill(){
-        bill.setText("======================\n"
-                       +"Library Name \n"
-                       +"NO of Date\t"+lateDate.getText()+"\n"
-                       +"Amount\t"+fine.getText()+"\n"
-                       +"======================");
+
+    private void calculate(String rDate) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate rday = LocalDate.parse(rDate);
+
+        Long dayGap = ChronoUnit.DAYS.between(rday, today);
+
+        if (dayGap > 0) {
+
+            lateDate.setText(dayGap.toString());
+            long finePrice = 2 * dayGap;
+            fine.setText(String.valueOf(finePrice) + " $");
+
+        } else {
+            lateDate.setText("0");
+            fine.setText("0");
+        }
+        bill();
     }
 
     @SuppressWarnings("unchecked")
@@ -66,6 +87,8 @@ public class Return extends javax.swing.JInternalFrame {
         memberId = new javax.swing.JTextField();
         lateDate = new javax.swing.JTextField();
         fine = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        recordID = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         bill = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
@@ -105,6 +128,11 @@ public class Return extends javax.swing.JInternalFrame {
         jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 260, -1, -1));
 
         bookId.setForeground(new java.awt.Color(37, 47, 65));
+        bookId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bookIdActionPerformed(evt);
+            }
+        });
         bookId.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 bookIdKeyReleased(evt);
@@ -113,6 +141,16 @@ public class Return extends javax.swing.JInternalFrame {
         jPanel1.add(bookId, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 130, 160, 30));
 
         memberId.setForeground(new java.awt.Color(37, 47, 65));
+        memberId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                memberIdActionPerformed(evt);
+            }
+        });
+        memberId.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                memberIdKeyReleased(evt);
+            }
+        });
         jPanel1.add(memberId, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 190, 160, 30));
 
         lateDate.setForeground(new java.awt.Color(37, 47, 65));
@@ -125,6 +163,19 @@ public class Return extends javax.swing.JInternalFrame {
             }
         });
         jPanel1.add(fine, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 330, 160, 30));
+
+        jLabel9.setFont(new java.awt.Font("Sitka Text", 3, 22)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(37, 47, 65));
+        jLabel9.setText("Record ID of Book Lend process");
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 40, 340, 30));
+
+        recordID.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        recordID.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                recordIDKeyReleased(evt);
+            }
+        });
+        jPanel1.add(recordID, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 40, 130, 30));
 
         bill.setColumns(20);
         bill.setForeground(new java.awt.Color(37, 47, 65));
@@ -187,53 +238,55 @@ public class Return extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bookIdKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_bookIdKeyReleased
-        try {
-            String sql = "SELECT `mid`,`rDate` FROM `booklend` WHERE bid='" + bookId.getText() + "' and mark='0'";
-
-            pst = conn.prepareStatement(sql);
-            rs = pst.executeQuery();
-
-            if (rs.next()) {
-                memberId.setText(rs.getString("mid"));
-                String rDate = rs.getString("rDate");
-                LocalDate today = LocalDate.now();
-                LocalDate rday = LocalDate.parse(rDate);
-
-                Long dayGap = ChronoUnit.DAYS.between(rday, today);
-
-                if (dayGap > 0) {
-                    
-                    lateDate.setText(dayGap.toString());
-                    long finePrice = 2 * dayGap;
-                    fine.setText(String.valueOf(finePrice)+" $");
-                    
-                } else {
-                    lateDate.setText("0");
-                    fine.setText("0");
-                }
-            }
-        } catch (Exception e) {
-
-        }
+//        try {
+//            String sql = "SELECT `return_date` FROM `booklend` WHERE book_id=" + bookId.getText();
+//
+//            pst = conn.prepareStatement(sql);
+//            rs = pst.executeQuery();
+//
+//            if (rs.next()) {
+//                memberId.setText(rs.getString("member_id"));
+//                String rDate = rs.getString("return_date");
+//                LocalDate today = LocalDate.now();
+//                LocalDate rday = LocalDate.parse(rDate);
+//
+//                Long dayGap = ChronoUnit.DAYS.between(rday, today);
+//
+//                if (dayGap > 0) {
+//
+//                    lateDate.setText(dayGap.toString());
+//                    long finePrice = 2 * dayGap;
+//                    fine.setText(String.valueOf(finePrice) + " $");
+//
+//                } else {
+//                    lateDate.setText("0");
+//                    fine.setText("0");
+//                }
+//            }
+//        } catch (Exception e) {
+//
+//        }
     }//GEN-LAST:event_bookIdKeyReleased
 
     private void btnReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReturnActionPerformed
-         try {
+        try {
             String sql = "INSERT INTO `bookreturn`"
-                    + "(`bid`, `mid`, `lateDate`, `fine`)"
-                    + " VALUES ('" + bookId.getText()
-                           + "','" + memberId.getText()
-                           + "','" + lateDate.getText()
-                           + "','" + fine.getText()+ "')";
+                    + "( 'record_id',`book_id`, `member_id`, `lateDate`, `fine`)"
+                    + " VALUES ('"
+                    + recordID.getText()
+                    + bookId.getText()
+                    + "','" + memberId.getText()
+                    + "','" + lateDate.getText()
+                    + "','" + fine.getText() + "')";
             PreparedStatement pst = (PreparedStatement) conn.prepareStatement(sql);
             pst.execute();
             update();
             bill();
-            returnMark();
+            //returnMark();
             JOptionPane.showMessageDialog(rootPane, "Successfully Insert");
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(rootPane, "Unsuccessfully Insert\n\n"+e);
+            JOptionPane.showMessageDialog(rootPane, "Unsuccessfully Insert\n\n" + e);
         }
     }//GEN-LAST:event_btnReturnActionPerformed
 
@@ -241,13 +294,56 @@ public class Return extends javax.swing.JInternalFrame {
         try {
             bill.print();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(rootPane,"Print command unseccess\n\n"+ e);
+            JOptionPane.showMessageDialog(rootPane, "Print command unseccess\n\n" + e);
         }
     }//GEN-LAST:event_printActionPerformed
 
     private void fineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fineActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_fineActionPerformed
+
+    private void bookIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bookIdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bookIdActionPerformed
+
+    private void memberIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberIdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_memberIdActionPerformed
+
+    private void memberIdKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_memberIdKeyReleased
+        try {
+            String sql = "SELECT `return_date` FROM `booklend` WHERE book_id = '" + bookId.getText() + "' and member_id= '" + memberId.getText() + "'";
+
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+
+            if (rs.next()) {
+                //memberId.setText(rs.getString("member_id"));
+                String rDate = rs.getString("return_date");
+                calculate(rDate);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(rootPane, e);
+        }
+    }//GEN-LAST:event_memberIdKeyReleased
+
+    private void recordIDKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_recordIDKeyReleased
+        try {
+            String sql = "SELECT book_id,`member_id`,`return_date` FROM `booklend` WHERE record_id = '" + recordID.getText() + "'";
+
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+
+            if (rs.next()) {
+                bookId.setText(rs.getString("book_id"));
+                memberId.setText("member_id");
+                
+                calculate(rs.getString("return_date"));
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(rootPane, e);
+        }
+    }//GEN-LAST:event_recordIDKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -263,10 +359,12 @@ public class Return extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField lateDate;
     private javax.swing.JTextField memberId;
     private javax.swing.JButton print;
+    private javax.swing.JTextField recordID;
     // End of variables declaration//GEN-END:variables
 }

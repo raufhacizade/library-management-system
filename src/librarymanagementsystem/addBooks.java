@@ -45,12 +45,12 @@ public class addBooks extends javax.swing.JInternalFrame {
 
     private void autoId() {
         try {
-            String sql = "SELECT `bid` FROM `addbook`  ORDER BY bid DESC LIMIT 1";
+            String sql = "SELECT `book_id` FROM `books`  ORDER BY book_id DESC LIMIT 1";
 
             pst = (PreparedStatement) conn.prepareStatement(sql);//BI1001 bazada
             rs = pst.executeQuery();//BI1001
             if (rs.next()) {
-                String rnno = rs.getString("bid");//BI1001
+                String rnno = rs.getString("book_id");//BI1001
                 int co = rnno.length();//5
                 String txt = rnno.substring(0, 2);//BI
                 String num = rnno.substring(2, co);//1001
@@ -69,14 +69,15 @@ public class addBooks extends javax.swing.JInternalFrame {
 
     private void tablelord() {
         try {
-            String sql = "SELECT `bid`,"
+            String sql = "SELECT `book_id`as 'book ID',"
                     + " `name`,"
-                    + " `b_code`,"
+                    + " `book_code` as 'book code',"
                     + " `date`,"
                     + " `category`,"
-                    + " `book_type`,"
+                    + " `book_type` as 'book type',"
                     + " `publisher`,"
-                    + " `price` FROM `addbook`";
+                    + " `price`,"
+                    + " `number` FROM `books`";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             booksTable.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));
@@ -106,13 +107,15 @@ public class addBooks extends javax.swing.JInternalFrame {
         clear = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         booksTable = new javax.swing.JTable();
+        jLabel15 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         bookId = new javax.swing.JTextField();
         name = new javax.swing.JTextField();
         bookCode = new javax.swing.JTextField();
+        number = new javax.swing.JTextField();
         bookDate = new com.toedter.calendar.JDateChooser();
-        category = new javax.swing.JComboBox<>();
-        bookType = new javax.swing.JComboBox<>();
+        category = new javax.swing.JComboBox<String>();
+        bookType = new javax.swing.JComboBox<String>();
         jScrollPane1 = new javax.swing.JScrollPane();
         publisher = new javax.swing.JTextArea();
         price = new javax.swing.JTextField();
@@ -167,16 +170,19 @@ public class addBooks extends javax.swing.JInternalFrame {
         jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 250, 120, -1));
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 3, 16)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(37, 47, 65));
         jLabel11.setText("Book Type");
         jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 90, 120, -1));
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 3, 16)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(37, 47, 65));
         jLabel12.setText("Price");
-        jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 250, 120, -1));
+        jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 210, 120, -1));
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 3, 16)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(37, 47, 65));
         jLabel13.setText("Publisher");
-        jPanel1.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 150, 120, -1));
+        jPanel1.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 130, 120, -1));
 
         add.setBackground(new java.awt.Color(97, 212, 195));
         add.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
@@ -246,6 +252,11 @@ public class addBooks extends javax.swing.JInternalFrame {
 
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 320, 950, 200));
 
+        jLabel15.setFont(new java.awt.Font("Tahoma", 3, 16)); // NOI18N
+        jLabel15.setForeground(new java.awt.Color(37, 47, 65));
+        jLabel15.setText("Number");
+        jPanel1.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 250, 100, 30));
+
         jLabel14.setBackground(new java.awt.Color(255, 255, 255));
         jLabel14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 90, 210, 210));
@@ -265,13 +276,14 @@ public class addBooks extends javax.swing.JInternalFrame {
 
         bookCode.setForeground(new java.awt.Color(37, 47, 65));
         jPanel1.add(bookCode, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 170, 160, 30));
+        jPanel1.add(number, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 250, 160, 30));
 
         bookDate.setForeground(new java.awt.Color(37, 47, 65));
         jPanel1.add(bookDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 210, 160, 30));
 
         category.setBackground(new java.awt.Color(97, 212, 195));
         category.setForeground(new java.awt.Color(37, 47, 65));
-        category.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select category", "Language", "Technology", "History", "Other" }));
+        category.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Select category", "Language", "Technology", "History", "Other" }));
         category.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 categoryActionPerformed(evt);
@@ -281,7 +293,7 @@ public class addBooks extends javax.swing.JInternalFrame {
 
         bookType.setBackground(new java.awt.Color(97, 212, 195));
         bookType.setForeground(new java.awt.Color(37, 47, 65));
-        bookType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Type", "Borrow", "Read only" }));
+        bookType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Select Type", "Borrow", "Read only" }));
         jPanel1.add(bookType, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 90, 160, 30));
 
         jScrollPane1.setAutoscrolls(true);
@@ -292,7 +304,7 @@ public class addBooks extends javax.swing.JInternalFrame {
         publisher.setAutoscrolls(false);
         jScrollPane1.setViewportView(publisher);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 140, 160, 80));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 130, 160, 70));
 
         price.setForeground(new java.awt.Color(37, 47, 65));
         price.addActionListener(new java.awt.event.ActionListener() {
@@ -300,7 +312,7 @@ public class addBooks extends javax.swing.JInternalFrame {
                 priceActionPerformed(evt);
             }
         });
-        jPanel1.add(price, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 250, 160, 30));
+        jPanel1.add(price, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 210, 160, 30));
 
         jLabel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 950, 230));
@@ -329,15 +341,16 @@ public class addBooks extends javax.swing.JInternalFrame {
     private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
         
         try {
-            String sql = "UPDATE `addbook` SET "
+            String sql = "UPDATE `books` SET "
                     + "`name`='" + name.getText()
-                    + "',`b_code`='" + bookCode.getText()
+                    + "',`book_code`='" + bookCode.getText()
                     + "',`date`='" + getDate()
                     + "',`category`='" + getCategory()
                     + "',`book_type`='" + getType()
                     + "',`publisher`='" + publisher.getText()
                     + "',`price`='" + price.getText()
-                    + "' WHERE `bid`='" + bookId.getText() + "'";
+                    + "',`number`='" + number.getText()
+                    + "' WHERE `book_id`='" + bookId.getText() + "'";
             pst = conn.prepareStatement(sql);
             pst.execute();
 
@@ -356,7 +369,7 @@ public class addBooks extends javax.swing.JInternalFrame {
 
     private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
         try {
-            String sql = "DELETE FROM `addbook` WHERE bid='" + bookId.getText() + "'";
+            String sql = "DELETE FROM `books` WHERE book_id='" + bookId.getText() + "'";
 
             pst = conn.prepareStatement(sql);
             pst.execute();
@@ -376,8 +389,8 @@ public class addBooks extends javax.swing.JInternalFrame {
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
         
         try {
-            String sql = "INSERT INTO `addbook`"
-                    + "(`bid`, `name`, `b_code`, `date`, `category`, `book_type`, `publisher`, `price`, `mark`) "
+            String sql = "INSERT INTO `books`"
+                    + "(`book_id`, `name`, `book_code`, `date`, `category`, `book_type`, `publisher`, `price`, `number`,count) "
                     + "VALUES ('" + bookId.getText()
                           + "','" + name.getText()
                           + "','" + bookCode.getText()
@@ -386,7 +399,8 @@ public class addBooks extends javax.swing.JInternalFrame {
                           + "','" + getType()
                           + "','" + publisher.getText()
                           + "','" + price.getText()
-                          + "','0')";
+                          + "','" + number.getText()
+                          + "','" + number.getText()+"')";
             PreparedStatement pst = (PreparedStatement) conn.prepareStatement(sql);
             pst.execute();
 
@@ -442,6 +456,7 @@ public class addBooks extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -454,6 +469,7 @@ public class addBooks extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField name;
+    private javax.swing.JTextField number;
     private javax.swing.JTextField price;
     private javax.swing.JTextArea publisher;
     private javax.swing.JButton update;

@@ -1,6 +1,7 @@
 package librarymanagementsystem;
 
 import java.sql.Connection;
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
@@ -244,13 +245,20 @@ public class Home extends javax.swing.JFrame {
                     while (true) {
                         Calendar cal = new GregorianCalendar();
                         int day = cal.get(Calendar.DAY_OF_MONTH);
-                        int month = cal.get(Calendar.MONTH)+1;
+                        int monthNumber = cal.get(Calendar.MONTH);
                         int year = cal.get(Calendar.YEAR);
 
                         int second = cal.get(Calendar.SECOND);
                         int minute = cal.get(Calendar.MINUTE);
                         int hour = cal.get(Calendar.HOUR);
-
+                        
+                        DateFormatSymbols date = new DateFormatSymbols();
+                        String[] months=date.getMonths();
+                        String month="";
+                        if (monthNumber >=0 && monthNumber <=11 ) {
+                            month=months[monthNumber];
+                        }
+                        
                         lblTime.setText(hour + ":" + minute + ":" + second);
                         lblDate.setText(year + "-" + month + "-" + day);
                     }

@@ -25,7 +25,7 @@ public class PendingList extends javax.swing.JInternalFrame {
         try {
             String sql = "SELECT "
                     + "`recordNo`, "
-                    + "`mid`, "
+                    + "`member_id`, "
                     + "`bid`, "
                     + "`lDate`, "
                     + "`rDate` "
@@ -170,7 +170,7 @@ public class PendingList extends javax.swing.JInternalFrame {
         try {
             String sql = "SELECT "
                     + "`recordNo`, "
-                    + "`mid`, "
+                    + "`member_id`, "
                     + "`bid`, "
                     + "`lDate`, "
                     + "`rDate` "
